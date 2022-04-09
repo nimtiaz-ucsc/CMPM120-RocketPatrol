@@ -9,6 +9,10 @@ class Play extends Phaser.Scene {
         this.load.image('ship', 'assets/spaceship.png');
         
         this.load.spritesheet('explosion', 'assets/explosion.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 9});
+
+        this.load.audio('sfx_select', 'assets/select.wav');
+        this.load.audio('sfx_explosion', 'assets/explosion.wav');
+        this.load.audio('sfx_rocket', 'assets/rocket.wav');
     }
 
 
@@ -53,16 +57,29 @@ class Play extends Phaser.Scene {
             fixedWidth: 100
         }
         this.scoreLeft = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding*2, this.p1Score, scoreConfig);
+
+        this.gameOver = false;
+        scoreConfig.fixedWidth = 0;
+        this.clock = this.time.delayedCall(10000, () => {
+            this.add.text(game.config.width/2, game.config.height/2, 'GAME OVER', scoreConfig).setOrigin(0.5);
+            this.add.text(game.config.width/2, game.config.height/2 + 64, 'Press [R] to Restart', scoreConfig).setOrigin(0.5);
+            this.gameOver = true;
+        }, null, this);
     }
 
     update() {
+        if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyR)) {
+            this.scene.restart();
+        }
+
         this.starfield.tilePositionX -= 4;
 
-        this.p1Rocket.update();
-
-        this.shipA.update();
-        this.shipB.update();
-        this.shipC.update();
+        if (!this.gameOver) {
+            this.p1Rocket.update();
+            this.shipA.update();
+            this.shipB.update();
+            this.shipC.update();
+        }
 
         if (this.checkCollision(this.p1Rocket, this.shipA)) {
             this.p1Rocket.reset();
@@ -97,5 +114,6 @@ class Play extends Phaser.Scene {
         });
         this.p1Score += ship.points;
         this.scoreLeft.text = this.p1Score;
+        this.sound.play('sfx_explosion');
     }
 }
