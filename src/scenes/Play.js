@@ -10,7 +10,6 @@ class Play extends Phaser.Scene {
         
         this.load.spritesheet('explosion', 'assets/explosion.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 9});
 
-        this.load.audio('sfx_select', 'assets/select.wav');
         this.load.audio('sfx_explosion', 'assets/explosion.wav');
         this.load.audio('sfx_rocket', 'assets/rocket.wav');
     }
@@ -60,9 +59,9 @@ class Play extends Phaser.Scene {
 
         this.gameOver = false;
         scoreConfig.fixedWidth = 0;
-        this.clock = this.time.delayedCall(10000, () => {
+        this.clock = this.time.delayedCall(game.settings.gameTimer, () => {
             this.add.text(game.config.width/2, game.config.height/2, 'GAME OVER', scoreConfig).setOrigin(0.5);
-            this.add.text(game.config.width/2, game.config.height/2 + 64, 'Press [R] to Restart', scoreConfig).setOrigin(0.5);
+            this.add.text(game.config.width/2, game.config.height/2 + 64, 'Press [R] to Restart or ← for Menu', scoreConfig).setOrigin(0.5);
             this.gameOver = true;
         }, null, this);
     }
@@ -70,6 +69,10 @@ class Play extends Phaser.Scene {
     update() {
         if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyR)) {
             this.scene.restart();
+        }
+
+        if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyLEFT)) {
+            this.scene.start('menu');
         }
 
         this.starfield.tilePositionX -= 4;
