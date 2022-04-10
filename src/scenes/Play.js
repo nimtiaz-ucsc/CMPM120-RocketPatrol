@@ -10,6 +10,7 @@ class Play extends Phaser.Scene {
         
         this.load.spritesheet('explosion', 'assets/explosion.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 9});
 
+        this.load.audio('sfx_select', 'assets/select.wav');
         this.load.audio('sfx_explosion', 'assets/explosion.wav');
         this.load.audio('sfx_rocket', 'assets/rocket.wav');
     }
@@ -68,10 +69,12 @@ class Play extends Phaser.Scene {
 
     update() {
         if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyR)) {
+            this.sound.play('sfx_select');
             this.scene.restart();
         }
 
         if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyLEFT)) {
+            this.sound.play('sfx_select');
             this.scene.start('menu');
         }
 
